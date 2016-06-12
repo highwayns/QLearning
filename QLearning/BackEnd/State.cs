@@ -29,14 +29,14 @@ namespace QLearning
 
         #region Overridden Methods
 
-        //public override bool Equals(object obj) // NOT FOOKIN WORKING...DN WHY
-        //{
-        //    var otherState = obj as State;
-        //
-        //    return otherState.X == this.X &&
-        //        otherState.Y == this.Y &&
-        //        otherState.Index == this.Index;
-        //}
+        public override bool Equals(object obj) // NOT FOOKIN WORKING...DN WHY
+        {
+            var otherState = obj as State;
+        
+            return otherState.X == this.X &&
+                otherState.Y == this.Y &&
+                otherState.Index == this.Index;
+        }
 
         #endregion
     }
