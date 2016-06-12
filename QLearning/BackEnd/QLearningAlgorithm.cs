@@ -22,6 +22,7 @@ namespace QLearning
         #region Private Fields
 
         private Problem _problem;
+        private float _currentRandom;
 
         #endregion
 
@@ -39,22 +40,33 @@ namespace QLearning
             this.CurrentState = problem.STARTING_STATE;
             this.PopulateQTable(problem);
 
+            this._currentRandom = 100f;
             this._problem = problem;
         }
 
         public void Execute()
         {
-            while (!this.ReachedDestination())
+            var count = 50;
+
+            while (count > 0)
             {
-                var possibleMovements = this.QTable.Where(m => m.State.Equals(this.CurrentState)).ToList();
-                var nextMovement = this.GetNextMovement(possibleMovements);
+                this.CurrentState = this._problem.STARTING_STATE;
 
-                this.CurrentState = this.MoveAgent(nextMovement);
+                while (!this.ReachedDestination())
+                {
+                    var possibleMovements = this.QTable.Where(m => m.State.Equals(this.CurrentState)).ToList();
+                    var nextMovement = this.GetNextMovement(possibleMovements);
 
-                // Debug shit:
-                //var greatestReward = this.QTable.Where(m => m.Reward > 0);
-                this.QTable.Print(this.CurrentState);
-                Thread.Sleep(100);
+                    this.UpdateTable(nextMovement);
+                    this.CurrentState = this.GetDestinationState(nextMovement);
+
+                    // Debug shit:
+                    //var greatestReward = this.QTable.Where(m => m.Reward > 0);
+                    this.QTable.Print(this.CurrentState);
+                    Thread.Sleep(60);
+                }
+
+                this._currentRandom = this.UpdateRandom();
             }
         }
 
@@ -69,33 +81,19 @@ namespace QLearning
 
         private Movement GetNextMovement(List<Movement> possibleMovements)
         {
-            var bestUnknownReward = this.GetBestUnknownRewardMovement(possibleMovements);
-            var bestKnownReward = this.GetBestKnownRewardMovement(possibleMovements);
-
-            if (this.MustTakeTheBestPath())
-            {
-                if (bestUnknownReward.Reward != 0)
-                    return bestUnknownReward;
-                if (bestKnownReward.Reward != 0)
-                    return bestKnownReward;
-            }
+            if (this.MustTakeTheBestPath() && !this.AllMovementsHaveTheSameReward(possibleMovements))
+                return this.GetBestRewardMovement(possibleMovements);
 
             return this.GetRandomMovement(possibleMovements);
         }
 
-        private Movement GetBestUnknownRewardMovement(List<Movement> possibleMovements)
+        private bool AllMovementsHaveTheSameReward(List<Movement> movements)
         {
-            var unknownRewards = new Dictionary<Movement, float>();
-
-            foreach (var mov in possibleMovements)
-                unknownRewards.Add(mov, this._problem.Rewards[mov.State.Index]);
-
-            var max = unknownRewards.OrderBy(m => m.Value).Last();
-
-            return new Movement(max.Value, max.Key.State, max.Key.Action);
+            var rewards = movements.Select(m => m.Reward);
+            return rewards.Distinct().Count() == 1;
         }
 
-        private Movement GetBestKnownRewardMovement(List<Movement> possibleMovements)
+        private Movement GetBestRewardMovement(List<Movement> possibleMovements)
         {
             return possibleMovements.OrderBy(m => m.Reward).Last();
         }
@@ -106,10 +104,18 @@ namespace QLearning
             return possibleMovements[random.Next(possibleMovements.Count)];
         }
 
+        private float UpdateRandom()
+        {
+            if(this._currentRandom > 10)
+                return this._currentRandom - 1;
+
+            return this._currentRandom;
+        }
+
         private bool MustTakeTheBestPath()
         {
             var random = new Random();
-            return random.Next(1, 101) > this._problem.RANDOMNESS_PERENTAGE;
+            return random.Next(1, 101) > this._currentRandom;
         }
 
         private void PopulateQTable(Problem problem)
@@ -133,10 +139,8 @@ namespace QLearning
             }
         }
 
-        private State MoveAgent(Movement movement)
+        private State GetDestinationState(Movement movement)
         {
-            this.UpdateTable(this.QTable.Where(m => m.State.Equals(this.CurrentState) && m.Action == movement.Action).First().Reward, movement);
-
             if (movement.Action == eAction.West)
                 return new State(this.CurrentState.X - 1, this.CurrentState.Y, this._problem.Map[this.CurrentState.X - 1, this.CurrentState.Y]);
             else if (movement.Action == eAction.East)
@@ -147,9 +151,14 @@ namespace QLearning
             return new State(this.CurrentState.X, this.CurrentState.Y + 1, this._problem.Map[this.CurrentState.X, this.CurrentState.Y + 1]);
         }
 
-        private void UpdateTable(float currentReward, Movement movement)
+        private void UpdateTable(Movement movement)
         {
-            movement.Reward = RewardFunction.Calculate(currentReward, movement.Reward);
+            var nextState = this.GetDestinationState(movement);
+
+            var possibleMovements = this.QTable.Where(m => m.State.Equals(nextState)).ToList();
+            var bestFutureMovement = this.GetNextMovement(possibleMovements);
+
+            movement.Reward = RewardFunction.Calculate(this._problem.Rewards[nextState.Index], bestFutureMovement.Reward);
         }
 
         #endregion

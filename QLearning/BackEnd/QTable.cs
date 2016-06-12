@@ -20,12 +20,17 @@ namespace QLearning.BackEnd
         public void Print(State current)
         {
             Console.Clear();
+            
+            Console.WriteLine("Estado: | Acao: | Recompensa: |");
+            
+            foreach (var item in this)
+                Console.WriteLine(string.Format("{0} {1} {2}", item.State.Index, item.Action.ToString(), item.Reward));
 
             this._matrix = new string[10, 5];
 
             foreach (var item in this)
                 if (this._matrix[item.State.X, item.State.Y] == null)
-                    this._matrix[item.State.X, item.State.Y] = item.Reward.ToString();
+                    this._matrix[item.State.X, item.State.Y] = item.State.Index.ToString();
 
             this._matrix[current.X, current.Y] = "X";
 
@@ -38,6 +43,10 @@ namespace QLearning.BackEnd
 
                 Console.WriteLine();
             }
+
+            Console.WriteLine();
+
+            //Console.ReadKey();
         }
 
         #endregion

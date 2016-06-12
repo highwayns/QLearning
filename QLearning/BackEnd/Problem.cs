@@ -29,7 +29,7 @@ namespace QLearning
         public readonly int MAP_LENGTH = 10;
         public readonly int MAP_HEIGHT = 5;
 
-        public readonly int RANDOMNESS_PERENTAGE = 30;
+        //public readonly int RANDOMNESS_PERENTAGE = 30;
 
         #endregion
 

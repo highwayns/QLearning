@@ -16,10 +16,10 @@ namespace QLearning.BackEnd
 
         #region Static Methods
 
-        public static float Calculate(float currentReward, float bestMovementReward)
+        public static float Calculate(float movementReward, float nextStateBestReward)
         {
             // Q(s2, a23) = r + 0.5 * max(Q(s3,a32),Q(s3,a36))
-            return currentReward + RewardFunction.GAMMA * bestMovementReward;
+            return movementReward + RewardFunction.GAMMA * nextStateBestReward;
         }
  
         #endregion
