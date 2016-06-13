@@ -40,35 +40,47 @@ namespace QLearning
             this.CurrentState = problem.STARTING_STATE;
             this.PopulateQTable(problem);
 
-            this._currentRandom = 100f;
+            this._currentRandom = 30f;
             this._problem = problem;
         }
 
-        public void Execute()
+        public void DoNextStep()
         {
-            var count = 50;
+            this.QTable.Print(this.CurrentState);
 
-            while (count > 0)
+            if (this.ReachedDestination())
             {
                 this.CurrentState = this._problem.STARTING_STATE;
-
-                while (!this.ReachedDestination())
-                {
-                    var possibleMovements = this.QTable.Where(m => m.State.Equals(this.CurrentState)).ToList();
-                    var nextMovement = this.GetNextMovement(possibleMovements);
-
-                    this.UpdateTable(nextMovement);
-                    this.CurrentState = this.GetDestinationState(nextMovement);
-
-                    // Debug shit:
-                    //var greatestReward = this.QTable.Where(m => m.Reward > 0);
-                    this.QTable.Print(this.CurrentState);
-                    Thread.Sleep(60);
-                }
-
-                this._currentRandom = this.UpdateRandom();
+                //this._currentRandom = this.UpdateRandom();
             }
+
+            var possibleMovements = this.QTable.Where(m => m.State.Equals(this.CurrentState)).ToList();
+            var nextMovement = this.GetNextMovement(possibleMovements);
+
+            this.UpdateTable(nextMovement);
+            this.CurrentState = this.GetDestinationState(nextMovement);
         }
+
+        //public void Execute()
+        //{
+        //    var count = 50;
+        //
+        //    while (count > 0)
+        //    {
+        //        this.CurrentState = this._problem.STARTING_STATE;
+        //
+        //        while (!this.ReachedDestination())
+        //        {
+        //            var possibleMovements = this.QTable.Where(m => m.State.Equals(this.CurrentState)).ToList();
+        //            var nextMovement = this.GetNextMovement(possibleMovements);
+        //
+        //            this.UpdateTable(nextMovement);
+        //            this.CurrentState = this.GetDestinationState(nextMovement);
+        //        }
+        //
+        //        this._currentRandom = this.UpdateRandom();
+        //    }
+        //}
 
         #endregion
 

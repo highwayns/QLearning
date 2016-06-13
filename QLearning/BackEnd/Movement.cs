@@ -21,7 +21,7 @@ namespace QLearning
 
         #region Attributes and Properties
 
-        public float Reward { get; set; }
+        public double Reward { get; set; }
         public State State { get; set; }
         public eAction Action { get; set; }
 
