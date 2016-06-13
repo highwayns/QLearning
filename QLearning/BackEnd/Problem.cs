@@ -22,9 +22,9 @@ namespace QLearning
         public readonly State STARTING_STATE = new State(0, 0, 1);
         public readonly State ENDING_STATE = new State(0, 9, 50);
 
-        private readonly float STARTING_STATE_REWARD = 0f;
-        private readonly float OBSTACLE_REWARD = -100f;
-        private readonly float OBJECTIVE_REWARD = 100f;
+        public readonly float STARTING_STATE_REWARD = 0f;
+        public readonly float OBSTACLE_REWARD = -100f;
+        public readonly float OBJECTIVE_REWARD = 100f;
 
         public readonly int MAP_LENGTH = 10;
         public readonly int MAP_HEIGHT = 5;
