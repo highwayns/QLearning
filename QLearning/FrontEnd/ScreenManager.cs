@@ -60,7 +60,7 @@ namespace QLearning.FrontEnd
         {
             for (int y = 4; y > -1; y--)
                 for (int x = 0; x < 10; x++)
-                    this.Squares.Add(new Square(new Point(x * Square.SIZE, Square.SIZE * 4 - y * Square.SIZE), this.Problem.Map[x, y], Brushes.White));
+                    this.Squares.Add(new Square(new Point(20 + x * Square.SIZE, 20 + Square.SIZE * 4 - y * Square.SIZE), this.Problem.Map[x, y], Brushes.White));
         }
 
         private void UpdateSquares()

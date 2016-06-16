@@ -22,7 +22,7 @@ namespace QLearning
         #region Private Fields
 
         private Problem _problem;
-        private float _currentRandom;
+        //private float _currentRandom;
 
         #endregion
 
@@ -30,6 +30,9 @@ namespace QLearning
 
         public State CurrentState { get; set; }
         public QTable QTable { get; set; }
+
+        public int TimesRunned { get; set; }
+        public int CurrentRandom { get; set; }
 
         #endregion
 
@@ -39,19 +42,20 @@ namespace QLearning
         {
             this.CurrentState = problem.STARTING_STATE;
             this.PopulateQTable(problem);
+            this.TimesRunned = 0;
 
-            this._currentRandom = 30f;
+            //this._currentRandom = 30f;
             this._problem = problem;
         }
 
         public void DoNextStep()
         {
-            this.QTable.Print(this.CurrentState);
+            //this.QTable.Print(this.CurrentState);
 
             if (this.ReachedDestination())
             {
                 this.CurrentState = this._problem.STARTING_STATE;
-                //this._currentRandom = this.UpdateRandom();
+                this.TimesRunned++;
             }
 
             var possibleMovements = this.QTable.Where(m => m.State.Equals(this.CurrentState)).ToList();
@@ -60,27 +64,6 @@ namespace QLearning
             this.UpdateTable(nextMovement);
             this.CurrentState = this.GetDestinationState(nextMovement);
         }
-
-        //public void Execute()
-        //{
-        //    var count = 50;
-        //
-        //    while (count > 0)
-        //    {
-        //        this.CurrentState = this._problem.STARTING_STATE;
-        //
-        //        while (!this.ReachedDestination())
-        //        {
-        //            var possibleMovements = this.QTable.Where(m => m.State.Equals(this.CurrentState)).ToList();
-        //            var nextMovement = this.GetNextMovement(possibleMovements);
-        //
-        //            this.UpdateTable(nextMovement);
-        //            this.CurrentState = this.GetDestinationState(nextMovement);
-        //        }
-        //
-        //        this._currentRandom = this.UpdateRandom();
-        //    }
-        //}
 
         #endregion
 
@@ -113,21 +96,23 @@ namespace QLearning
         private Movement GetRandomMovement(List<Movement> possibleMovements)
         {
             var random = new Random();
-            return possibleMovements[random.Next(possibleMovements.Count)];
+            var randNum = random.Next(possibleMovements.Count);
+            randNum = random.Next(possibleMovements.Count);
+            return possibleMovements[randNum];
         }
 
         private float UpdateRandom()
         {
-            if(this._currentRandom > 10)
-                return this._currentRandom - 1;
+            if(this.CurrentRandom > 10)
+                return this.CurrentRandom - 1;
 
-            return this._currentRandom;
+            return this.CurrentRandom;
         }
 
         private bool MustTakeTheBestPath()
         {
             var random = new Random();
-            return random.Next(1, 101) > this._currentRandom;
+            return random.Next(1, 101) > this.CurrentRandom;
         }
 
         private void PopulateQTable(Problem problem)
@@ -168,7 +153,7 @@ namespace QLearning
             var nextState = this.GetDestinationState(movement);
 
             var possibleMovements = this.QTable.Where(m => m.State.Equals(nextState)).ToList();
-            var bestFutureMovement = this.GetNextMovement(possibleMovements);
+            var bestFutureMovement = this.GetBestRewardMovement(possibleMovements);
 
             movement.Reward = RewardFunction.Calculate(this._problem.Rewards[nextState.Index], bestFutureMovement.Reward);
         }
