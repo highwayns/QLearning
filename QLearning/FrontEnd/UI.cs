@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QLearning.FrontEnd
@@ -89,6 +82,29 @@ namespace QLearning.FrontEnd
         {
             this.DrawingTimer.Start();
             this.button1.Enabled = false;
+        }
+
+        private void StopButton_Click(object sender, EventArgs e)
+        {
+            this.DrawingTimer.Stop();
+
+            this.ListBoxConsole.Items.Clear();
+            this.ListBoxConsole.Items.Add("Melhor caminho encontrado: ");
+
+            foreach (var mov in this._screenManager.Algorithm.GetBestPathFound())
+                if (mov == eAction.East)
+                    this.ListBoxConsole.Items.Add("> Leste");
+                else if (mov == eAction.West)
+                    this.ListBoxConsole.Items.Add("> Oeste");
+                else if (mov == eAction.North)
+                    this.ListBoxConsole.Items.Add("> Norte");
+                else if (mov == eAction.South)
+                    this.ListBoxConsole.Items.Add("> Sul");
+
+            this.StartButton.Enabled = true;
+            this._screenManager.Algorithm.Clear();
+
+            this._screenManager.Algorithm.StartUp(this._screenManager.Problem);
         }
 
         private void RandomPercentage_ValueChanged(object sender, EventArgs e)

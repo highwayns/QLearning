@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QLearning.FrontEnd
 {
     public partial class QTableForm : Form
     {
-        #region Private Fields
-
-        ScreenManager _screenManager;
- 
-        #endregion
+        #region Constructor
 
         public QTableForm(ScreenManager screenManager)
         {
@@ -24,12 +14,26 @@ namespace QLearning.FrontEnd
             InitializeComponent();
         }
 
+        #endregion
+
+        #region Private Fields
+
+        ScreenManager _screenManager;
+
+        #endregion
+
+        #region SignedEvents
+
         private void QTableDisplay_Load(object sender, EventArgs e)
         {
             var dataTable = new DataTable();
             this.PopulateTable(dataTable);
             this.dataGridView1.DataSource = dataTable;
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void PopulateTable(DataTable table)
         {
@@ -52,5 +56,7 @@ namespace QLearning.FrontEnd
                 table.Rows.Add(dataRow);
             }
         }
+
+        #endregion
     }
 }

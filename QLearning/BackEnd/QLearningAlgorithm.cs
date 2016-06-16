@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace QLearning
 {
@@ -44,7 +41,6 @@ namespace QLearning
             this.PopulateQTable(problem);
             this.TimesRunned = 0;
 
-            //this._currentRandom = 30f;
             this._problem = problem;
         }
 
@@ -63,6 +59,35 @@ namespace QLearning
 
             this.UpdateTable(nextMovement);
             this.CurrentState = this.GetDestinationState(nextMovement);
+        }
+
+        public void Clear()
+        {
+            this.QTable.Clear();
+            this.CurrentState = _problem.STARTING_STATE;
+            this.TimesRunned = 0;
+        }
+
+        public List<eAction> GetBestPathFound()
+        {
+            var movements = new List<eAction>();
+
+            this.CurrentState = this._problem.STARTING_STATE;
+            this.CurrentRandom = 0;
+
+            while(!this.ReachedDestination())
+            {
+                var possibleMovements = this.QTable.Where(m => m.State.Equals(this.CurrentState)).ToList();
+                var nextMovement = this.GetNextMovement(possibleMovements);
+
+                this.UpdateTable(nextMovement);
+
+                movements.Add(nextMovement.Action);
+
+                this.CurrentState = this.GetDestinationState(nextMovement);
+            }
+
+            return movements;
         }
 
         #endregion
