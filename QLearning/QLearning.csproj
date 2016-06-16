@@ -50,6 +50,7 @@
     <Compile Include="BackEnd\Problem.cs" />
     <Compile Include="BackEnd\QLearningAlgorithm.cs" />
     <Compile Include="BackEnd\QTable.cs" />
+    <Compile Include="BackEnd\RandomGenerator.cs" />
     <Compile Include="BackEnd\RewardFunction.cs" />
     <Compile Include="BackEnd\State.cs" />
     <Compile Include="BackEnd\Movement.cs" />

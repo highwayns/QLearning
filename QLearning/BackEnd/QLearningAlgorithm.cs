@@ -120,24 +120,12 @@ namespace QLearning
 
         private Movement GetRandomMovement(List<Movement> possibleMovements)
         {
-            var random = new Random();
-            var randNum = random.Next(possibleMovements.Count);
-            randNum = random.Next(possibleMovements.Count);
-            return possibleMovements[randNum];
-        }
-
-        private float UpdateRandom()
-        {
-            if(this.CurrentRandom > 10)
-                return this.CurrentRandom - 1;
-
-            return this.CurrentRandom;
+            return possibleMovements[RandomGenerator.Generate(0, possibleMovements.Count)];
         }
 
         private bool MustTakeTheBestPath()
         {
-            var random = new Random();
-            return random.Next(1, 101) > this.CurrentRandom;
+            return RandomGenerator.Generate(1, 101) > this.CurrentRandom;
         }
 
         private void PopulateQTable(Problem problem)
